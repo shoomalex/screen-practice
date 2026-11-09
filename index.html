@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Заявка на справку — Отдел кадров</title>
+  <style>
+    :root { --ink:#17212f; --muted:#6c788a; --line:#dfe5ec; --blue:#2764e7; --blue-dark:#1d53c7; --blue-pale:#edf3ff; --paper:#fff; --bg:#f4f7fb; --shadow:0 14px 42px rgba(32,50,74,.11); }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); background:var(--bg); font:15px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .topbar { height:70px; display:flex; align-items:center; padding:0 max(24px, calc((100% - 1040px)/2)); background:rgba(255,255,255,.88); border-bottom:1px solid rgba(223,229,236,.85); }
+    .brand { display:flex; align-items:center; gap:11px; font-size:16px; font-weight:750; letter-spacing:-.01em; }
+    .brand-mark { width:34px; height:34px; display:grid; place-items:center; border-radius:10px; background:var(--blue); color:white; }
+    main { max-width:1040px; margin:0 auto; padding:52px 24px 72px; }
+    .intro { max-width:670px; margin-bottom:30px; }
+    .eyebrow { display:flex; align-items:center; gap:8px; margin:0 0 10px; color:var(--blue); font-weight:700; font-size:13px; }
+    .eyebrow svg { width:17px; height:17px; }
+    h1 { margin:0; font-size:clamp(29px, 4vw, 42px); line-height:1.12; letter-spacing:-.04em; }
+    .lead { margin:13px 0 0; color:var(--muted); font-size:16px; }
+    .card { overflow:hidden; background:var(--paper); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); }
+    .form-body { padding:32px; }
+    .section + .section { margin-top:30px; padding-top:29px; border-top:1px solid var(--line); }
+    .section-head { display:flex; gap:12px; align-items:flex-start; margin-bottom:20px; }
+    .step { flex:0 0 auto; width:28px; height:28px; display:grid; place-items:center; border-radius:50%; background:var(--blue-pale); color:var(--blue); font-size:13px; font-weight:800; }
+    .section h2 { margin:1px 0 2px; font-size:19px; letter-spacing:-.02em; }
+    .section-head p { margin:0; color:var(--muted); font-size:13px; }
+    label { display:block; margin-bottom:7px; font-size:14px; font-weight:650; }
+    .required { color:#d84343; }
+    select, input, textarea { width:100%; appearance:none; border:1px solid #cbd4df; border-radius:10px; outline:none; background:#fff; color:var(--ink); font:inherit; transition:.16s border-color, .16s box-shadow; }
+    select, input { height:47px; padding:0 13px; }
+    select { padding-right:42px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%236c788a' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath d='m5 7 5 5 5-5'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 13px center; }
+    textarea { min-height:100px; padding:12px 13px; resize:vertical; }
+    select:focus, input:focus, textarea:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(39,100,231,.14); }
+    .field-error select { border-color:#df4c4c; }
+    .error { display:none; margin:7px 0 0; color:#c33939; font-size:13px; }
+    .field-error .error { display:block; }
+    .document-badge { display:none; align-items:center; gap:11px; margin-top:16px; padding:13px 14px; border:1px solid #cbdcff; border-radius:12px; background:var(--blue-pale); color:#214d9e; }
+    .document-badge.visible { display:flex; }
+    .document-icon { width:30px; height:30px; display:grid; place-items:center; flex:0 0 auto; background:white; border-radius:8px; }
+    .document-icon svg { width:18px; height:18px; }
+    .document-badge small { display:block; color:#5e76a4; font-size:12px; }
+    .document-badge strong { display:block; font-size:14px; }
+    .extra-fields { display:none; margin-top:20px; padding:20px; border-radius:13px; background:#f8fafc; }
+    .extra-fields.visible { display:block; }
+    .extra-title { margin:0 0 16px; font-size:14px; font-weight:750; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .grid.three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .field.full { grid-column:1/-1; }
+    .choice { display:flex; align-items:center; min-height:47px; gap:8px; padding:4px; border:1px solid #cbd4df; border-radius:10px; background:white; }
+    .choice label { flex:1; height:37px; display:grid; place-items:center; margin:0; border-radius:7px; color:var(--muted); cursor:pointer; font-size:13px; font-weight:650; }
+    .choice input { position:absolute; opacity:0; pointer-events:none; }
+    .choice input:checked + span { display:grid; width:100%; height:100%; place-items:center; border-radius:7px; background:var(--blue-pale); color:var(--blue); }
+    .choice span { display:grid; width:100%; height:100%; place-items:center; }
+    .footer { display:flex; align-items:center; justify-content:space-between; gap:18px; padding:20px 32px; border-top:1px solid var(--line); background:#fbfcfe; }
+    .privacy { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px; }
+    .privacy svg { width:18px; height:18px; color:#7f8da0; }
+    button { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:45px; padding:0 20px; border:0; border-radius:10px; background:var(--blue); color:white; cursor:pointer; font:inherit; font-weight:700; box-shadow:0 5px 12px rgba(39,100,231,.22); transition:.16s transform,.16s background; }
+    button:hover { background:var(--blue-dark); transform:translateY(-1px); }
+    button svg { width:17px; height:17px; }
+    .success { display:none; text-align:center; padding:54px 32px 38px; }
+    .success.visible { display:block; }
+    .success-icon { width:60px; height:60px; display:grid; place-items:center; margin:0 auto 18px; border-radius:50%; background:#e8f8ee; color:#299451; }
+    .success-icon svg { width:32px; height:32px; }
+    .success h2 { margin:0; font-size:29px; letter-spacing:-.035em; }
+    .success > p { max-width:470px; margin:9px auto 26px; color:var(--muted); }
+    .summary { max-width:570px; margin:0 auto 22px; overflow:hidden; text-align:left; border:1px solid var(--line); border-radius:13px; }
+    .summary-title { padding:13px 17px; background:#f8fafc; border-bottom:1px solid var(--line); font-size:13px; font-weight:750; }
+    .summary-row { display:grid; grid-template-columns:160px 1fr; gap:16px; padding:12px 17px; border-bottom:1px solid #edf0f4; }
+    .summary-row:last-child { border-bottom:0; }
+    .summary-row span { color:var(--muted); font-size:13px; }
+    .employee { max-width:570px; margin:0 auto 24px; padding:18px; text-align:left; border-radius:13px; background:#f2f6fc; }
+    .employee-head { display:flex; align-items:center; gap:9px; margin-bottom:12px; font-size:14px; font-weight:750; }
+    .employee-head svg { width:20px; color:var(--blue); }
+    .employee dl { display:grid; grid-template-columns:1fr 1fr; gap:9px 18px; margin:0; }
+    .employee div { font-size:13px; }
+    .employee dt { color:var(--muted); }
+    .employee dd { margin:2px 0 0; font-weight:650; }
+    .outline { background:white; color:var(--blue); border:1px solid #b9cdf7; box-shadow:none; }
+    .outline:hover { background:var(--blue-pale); }
+    /* Visual language inspired by the supplied reference: editorial type, soft panels, black and acid-lime accents. */
+    :root { --ink:#050505; --muted:#686868; --line:#e7e7e7; --blue:#000; --blue-dark:#222; --blue-pale:#f0f0f0; --paper:#fff; --bg:#f5f5f5; --shadow:none; }
+    body { font-family:Arial, Helvetica, sans-serif; letter-spacing:-.025em; }
+    .topbar { display:none; }
+    main { max-width:1300px; padding:50px 26px 74px; }
+    .intro { max-width:950px; margin:0 auto 62px; text-align:center; }
+    .eyebrow { display:none; }
+    h1 { font-size:clamp(42px, 5.45vw, 72px); font-weight:700; letter-spacing:-.065em; line-height:.98; }
+    .lead { max-width:500px; margin:20px auto 0; color:#6a6a6a; font-size:17px; line-height:1.35; letter-spacing:-.025em; }
+    .card { border:0; border-radius:42px; box-shadow:none; background:#fff; }
+    .form-body { padding:50px 68px 42px; }
+    .section { max-width:100%; }
+    .section + .section { margin-top:41px; padding-top:38px; }
+    .section-head { margin-bottom:25px; align-items:center; }
+    .step { width:32px; height:32px; background:#b8f339; color:#000; font-size:14px; }
+    .section h2 { margin:0 0 2px; font-size:26px; font-weight:700; letter-spacing:-.045em; }
+    .section-head p { color:#777; font-size:14px; letter-spacing:-.015em; }
+    label { margin-bottom:9px; color:#161616; font-size:14px; letter-spacing:-.015em; }
+    select, input, textarea { border:1px solid #dedede; border-radius:13px; background:#fafafa; color:#050505; font-size:15px; letter-spacing:-.015em; }
+    select, input { height:54px; padding-left:16px; }
+    textarea { min-height:112px; padding:15px 16px; }
+    select:focus, input:focus, textarea:focus { border-color:#000; box-shadow:0 0 0 3px rgba(184,243,57,.5); }
+    .document-badge { margin-top:19px; padding:16px 17px; border:0; border-radius:16px; background:#b8f339; color:#000; }
+    .document-badge small { color:#4b6320; font-size:12px; }
+    .document-badge strong { font-size:15px; }
+    .document-icon { width:35px; height:35px; border-radius:10px; color:#000; }
+    .extra-fields { margin-top:19px; padding:24px; border-radius:19px; background:#f5f5f5; }
+    .extra-title { margin-bottom:19px; font-size:15px; }
+    .grid { gap:19px; }
+    .choice { min-height:54px; gap:5px; padding:5px; border:0; border-radius:16px; background:#f0f0f0; }
+    .choice label { height:44px; border-radius:11px; font-size:13px; }
+    .choice input:checked + span { border-radius:11px; background:#000; color:#fff; }
+    .footer { padding:25px 68px 34px; border:0; background:transparent; }
+    .privacy { color:#777; font-size:12px; }
+    .privacy svg { color:#000; }
+    button { min-height:54px; padding:0 25px; border-radius:14px; background:#000; box-shadow:none; font-size:15px; }
+    button:hover { background:#252525; }
+    .success { padding:65px 35px 52px; }
+    .success-icon { width:67px; height:67px; margin-bottom:20px; background:#b8f339; color:#000; }
+    .success h2 { font-size:39px; }
+    .success > p { font-size:16px; }
+    .summary { border:0; border-radius:18px; background:#f4f4f4; }
+    .summary-title { padding:16px 19px; background:#ececec; border:0; }
+    .summary-row { border-color:#e3e3e3; padding:14px 19px; }
+    .employee { border-radius:18px; background:#b8f339; padding:21px; }
+    .employee-head svg { color:#000; }
+    .outline { border:1px solid #000; background:transparent; color:#000; }
+    .outline:hover { background:#eee; }
+    @media (max-width:760px) { main { padding:31px 14px 44px; } .intro { margin-bottom:34px; padding:0 14px; } h1 { font-size:clamp(39px, 11vw, 53px); line-height:.98; } .lead { margin-top:16px; font-size:15px; } .card { border-radius:27px; } .form-body { padding:30px 20px 27px; } .section + .section { margin-top:30px; padding-top:29px; } .section-head { align-items:flex-start; gap:10px; margin-bottom:20px; } .step { width:27px; height:27px; font-size:12px; } .section h2 { font-size:22px; } .section-head p { font-size:13px; line-height:1.3; } .grid,.grid.three { grid-template-columns:1fr; gap:15px; } .field.full { grid-column:auto; } select, input { height:51px; } .extra-fields { padding:18px; border-radius:15px; } .choice { min-height:48px; gap:3px; border-radius:13px; } .choice label { height:38px; font-size:11px; line-height:1.05; text-align:center; } .footer { align-items:stretch; flex-direction:column-reverse; padding:12px 20px 23px; gap:14px; } .footer button { width:100%; min-height:52px; } .privacy { justify-content:center; text-align:center; } .success { padding:43px 18px 29px; } .success h2 { font-size:31px; } .summary-row { grid-template-columns:1fr; gap:2px; } .employee dl { grid-template-columns:1fr; gap:9px; } }
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M8 7h8M8 11h8"/></svg></span>Кадровый портал</div></header>
+  <main>
+    <div class="intro"><p class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z"/><path d="M12 6v6l4 2"/></svg>Отдел кадров</p><h1>Заявка на справку</h1><p class="lead">Выберите, для чего нужна справка — мы подскажем нужный документ и подготовим его.</p></div>
+    <section class="card" aria-live="polite">
+      <form id="requestForm" novalidate>
+        <div class="form-body">
+          <div class="section">
+            <div class="section-head"><span class="step">1</span><div><h2>Цель справки</h2><p>От цели зависит вид документа и состав сведений.</p></div></div>
+            <div id="purposeField"><label for="purpose">Выберите цель <span class="required">*</span></label><select id="purpose" name="purpose" aria-describedby="purposeError"><option value="">Выберите из списка</option><option value="visa">Виза</option><option value="rent">Аренда жилья</option><option value="credit">Кредит или ипотека</option><option value="employment">Подтверждение занятости</option><option value="newjob">Новое трудоустройство</option><option value="pension">Пенсия</option><option value="general">По месту требования</option></select><p class="error" id="purposeError">Выберите цель, чтобы продолжить.</p></div>
+            <div id="documentBadge" class="document-badge"><span class="document-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span><div><small>Будет подготовлен документ</small><strong id="documentName"></strong></div></div>
+            <div id="extraFields" class="extra-fields"></div>
+          </div>
+          <div class="section">
+            <div class="section-head"><span class="step">2</span><div><h2>Параметры справки</h2><p>Уточните получателя и способ оформления.</p></div></div>
+            <div class="grid">
+              <div class="field"><label for="recipient">Куда направить</label><input id="recipient" name="recipient" type="text" placeholder="Например, в Консульство Республики Италия"></div>
+              <div class="field"><label for="language">Язык справки</label><select id="language" name="language"><option>Русский</option><option>Английский</option></select></div>
+              <div class="field full"><label>Формат</label><div class="choice" role="radiogroup" aria-label="Формат справки"><label><input type="radio" name="format" value="Бумажная с печатью" checked><span>Бумажная с печатью</span></label><label><input type="radio" name="format" value="Скан"><span>Скан</span></label><label><input type="radio" name="format" value="С ЭЦП"><span>С ЭЦП</span></label></div></div>
+              <div class="field full"><label for="comment">Комментарий</label><textarea id="comment" name="comment" placeholder="Укажите важные детали, если они есть"></textarea></div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><div class="privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Данные доступны только отделу кадров</div><button type="submit">Оформить <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </form>
+      <section class="success" id="success" aria-labelledby="successTitle">
+        <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 4.2 4.2L19 6.5"/></svg></div><h2 id="successTitle">Заявка отправлена</h2><p>Отдел кадров получил заявку. Справка будет подготовлена в ближайшее время.</p>
+        <div class="summary"><div class="summary-title">Сводка по заявке</div><div class="summary-row"><span>Цель</span><strong id="sumPurpose"></strong></div><div class="summary-row"><span>Документ</span><strong id="sumDocument"></strong></div><div class="summary-row"><span>Куда направить</span><strong id="sumRecipient"></strong></div><div class="summary-row"><span>Язык</span><strong id="sumLanguage"></strong></div><div class="summary-row"><span>Формат</span><strong id="sumFormat"></strong></div></div>
+        <div class="employee"><div class="employee-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21a8 8 0 0 0-16 0M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/></svg>Данные сотрудника для заполнения</div><dl><div><dt>Ф. И. О.</dt><dd>Терентьев Михаил Павлович</dd></div><div><dt>Должность</dt><dd>Начальник отдела</dd></div><div><dt>Оклад</dt><dd>300 000 рублей</dd></div><div><dt>Дата приёма на работу</dt><dd>03.08.2008</dd></div><div><dt>Тип занятости</dt><dd>Полный день</dd></div></dl></div>
+        <button class="outline" id="another" type="button">Оформить ещё одну</button>
+      </section>
+    </section>
+  </main>
+  <script>
+    const options = {
+      visa: { name:'Справка с места работы', fields:`<p class="extra-title">Данные для визы</p><div class="grid three"><div class="field"><label for="country">Страна</label><input id="country" placeholder="Например, Франция"></div><div class="field"><label for="visaType">Тип визы</label><select id="visaType"><option>Туристическая</option><option>Деловая</option><option>Гостевая</option></select></div><div class="field"><label for="tripDates">Даты поездки</label><input id="tripDates" placeholder="12–26 июня 2027"></div></div>` },
+      rent: { name:'Справка о доходах', fields:`<p class="extra-title">Данные для аренды</p><div class="grid"><div class="field"><label for="landlord">Арендодатель или агентство</label><input id="landlord" placeholder="Название организации"></div><div class="field"><label for="incomePeriodRent">Период дохода</label><select id="incomePeriodRent"><option>Последние 6 месяцев</option><option>Последние 12 месяцев</option><option>Текущий год</option></select></div></div>` },
+      credit: { name:'Справка о доходах', fields:`<p class="extra-title">Данные для банка</p><div class="grid three"><div class="field"><label for="bank">Банк</label><input id="bank" placeholder="Название банка"></div><div class="field"><label for="creditType">Тип кредита</label><select id="creditType"><option>Ипотека</option><option>Потребительский</option><option>Автокредит</option></select></div><div class="field"><label for="incomePeriodCredit">Период дохода</label><select id="incomePeriodCredit"><option>Последние 6 месяцев</option><option>Последние 12 месяцев</option><option>Текущий год</option></select></div></div>` },
+      employment: { name:'Справка с места работы', fields:`<p class="extra-title">Данные получателя</p><div class="grid"><div class="field"><label for="organization">Организация-получатель</label><input id="organization" placeholder="Название организации"></div><div class="field"><label for="issueDate">Нужна к дате</label><input id="issueDate" type="date"></div></div>` },
+      newjob: { name:'Справка о стаже', fields:`<p class="extra-title">Данные для нового работодателя</p><div class="grid"><div class="field"><label for="newEmployer">Новый работодатель</label><input id="newEmployer" placeholder="Название организации"></div><div class="field"><label for="period">Какой период указать</label><select id="period"><option>Весь период работы</option><option>Последние 5 лет</option><option>Только текущая должность</option></select></div></div>` },
+      pension: { name:'Справка о стаже', fields:`<p class="extra-title">Данные для оформления пенсии</p><div class="grid"><div class="field"><label for="fund">Пенсионный орган</label><input id="fund" placeholder="Например, СФР"></div><div class="field"><label for="pensionPeriod">Период подтверждения</label><select id="pensionPeriod"><option>Весь период работы</option><option>До 2002 года</option><option>После 2002 года</option></select></div></div>` },
+      general: { name:'Справка с места работы', fields:`<p class="extra-title">Уточните требования</p><div class="grid"><div class="field full"><label for="requirements">Какие сведения нужны в справке</label><textarea id="requirements" placeholder="Опишите требования получателя к справке"></textarea></div></div>` }
+    };
+    const form = document.getElementById('requestForm'), purpose = document.getElementById('purpose'), badge = document.getElementById('documentBadge'), extra = document.getElementById('extraFields'), purposeField = document.getElementById('purposeField');
+    purpose.addEventListener('change', () => { const item = options[purpose.value]; purposeField.classList.remove('field-error'); if (!item) { badge.classList.remove('visible'); extra.classList.remove('visible'); extra.innerHTML=''; return; } document.getElementById('documentName').textContent=item.name; extra.innerHTML=item.fields; badge.classList.add('visible'); extra.classList.add('visible'); });
+    form.addEventListener('submit', e => { e.preventDefault(); if (!purpose.value) { purposeField.classList.add('field-error'); purpose.focus(); return; } const item=options[purpose.value], selected=purpose.options[purpose.selectedIndex].text, recipient=document.getElementById('recipient').value.trim() || 'Не указано', format=document.querySelector('input[name="format"]:checked').value; document.getElementById('sumPurpose').textContent=selected; document.getElementById('sumDocument').textContent=item.name; document.getElementById('sumRecipient').textContent=recipient; document.getElementById('sumLanguage').textContent=document.getElementById('language').value; document.getElementById('sumFormat').textContent=format; form.style.display='none'; document.getElementById('success').classList.add('visible'); document.getElementById('successTitle').focus(); });
+    document.getElementById('another').addEventListener('click', () => { form.reset(); badge.classList.remove('visible'); extra.classList.remove('visible'); extra.innerHTML=''; document.getElementById('success').classList.remove('visible'); form.style.display='block'; purpose.focus(); });
+  </script>
+</body>
+</html>
